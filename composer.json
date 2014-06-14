@@ -1,0 +1,20 @@
+{
+    "name": "boots/form",
+    "type": "boots-extension",
+    "description": "Use form elements with ease. Includes powerful utilities. Endless possibilities with built-in hooks.",
+    "keywords": ["boots","wordpress","form","utility"],
+    "homepage": "http://wpboots.com/extensions/form",
+    "license": "GPLv2",
+    "authors": [
+        {
+            "name": "M. Kamal Khan",
+            "email": "shout@bhittani.com",
+            "homepage": "http://bhittani.com",
+            "role": "Developer"
+        }
+    ],
+    "require" : {
+        "boots/media" : "dev-master",
+        "boots/ajax" : "dev-master"
+    }
+}
