@@ -61,7 +61,7 @@ class Boots_Form
             ->source($this->url . '/third-party/select2-3.4.5/select2.css')
             ->done()
         ->raw_style('boots_form')
-            ->source($this->url . '/css/boots_form.min.css')
+            ->source($this->url . '/css/boots_form.css')
             ->requires('wp-color-picker')
             ->requires('select2')
             ->done();
@@ -374,6 +374,7 @@ class Boots_Form
         $html .= '></a>';
         $html .= '<input type="hidden"';
         $html .= $this->get_attributes($name, $id, $class, $style);
+        $html .= ' value="' . $img . '"';
         $html .= ' />
         </div>';
 
