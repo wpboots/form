@@ -14,6 +14,7 @@
         }
     ],
     "require" : {
+        "boots/database" : "dev-master",
         "boots/media" : "dev-master",
         "boots/ajax" : "dev-master"
     }
