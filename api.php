@@ -179,7 +179,7 @@ class Boots_Form
         $Args = $this->extract_args($Args);
         $label_tag = $this->get_label_tag($Args['title'], $Args['id']);
         $attrs = $this->get_attributes($Args['name'], $Args['id'], $Args['class'], $Args['style']);
-        $value = $this->value($Args['name']);
+        $value = $Args['name'] !== false ? $this->value($Args['name']) : '';
         $help_tag = $this->get_help_tag($Args['help']);
         return apply_filters('boots_form_field_' . $type, '', $Args, $value, $label_tag, $attrs, $help_tag);
     }
