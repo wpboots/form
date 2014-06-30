@@ -186,7 +186,7 @@ class Boots_Form
 
     private function generate_html($Args)
     {
-        return $Args;
+        return $Args['html'];
     }
 
     private function generate_textbox($Args, $flavour = 'text')
