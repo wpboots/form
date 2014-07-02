@@ -91,6 +91,14 @@
         {
             var self = this;
 
+            $('.boots-form-img-upload input').each(function(i){
+                var $parent = $(this).parent();
+                if(($(this).val()).trim() != '')
+                {
+                    self.fetch_image($parent, $(this).val(), $parent.width(), 73);
+                }
+            });
+
             $('.boots-form-img-upload button', self.$elem).BootsMedia('click', {
                 multiple : false,
                 done : function(attachment, $button){
@@ -134,7 +142,7 @@
 
             $.BootsAjax({
                 data : {
-                    id: parseInt(id),
+                    id: id,
                     width: parseInt(width),
                     height: parseInt(height)
                 },

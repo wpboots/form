@@ -363,17 +363,17 @@ class Boots_Form
         $html .= '<div class="boots-form-input">';
 
         $html .= '
-        <div class="boots-form-img-upload">
+        <div class="boots-form-img-upload' . ($class ? (' ' . $class) : '') . '"' . ($style ? (' style="' . $style . '"') : '') . '>
             <button data-uploader_title="' . $title . '" data-uploader_button_text="' . (isset($button) ? $button : 'Choose Image') . '" data-for="' . $id . '"';
         $html .= $img ? ' style="display: none;"' : '';
         $html .= '>' . (isset($button) ? $button : 'Choose Image');
         $html .= '</button>';
-        $html .= $img ? '<img src="' . $img . '" width="100%" />' : '';
+        //$html .= $img ? '<img src="' . $img . '" width="100%" />' : '';
         $html .= '<a href="#" class="boots-form-img-cross" title="Remove"';
         $html .= !$img ? ' style="display: none;"' : '';
         $html .= '></a>';
         $html .= '<input type="hidden"';
-        $html .= $this->get_attributes($name, $id, $class, $style);
+        $html .= $this->get_attributes($name, $id, '', '');
         $html .= ' value="' . $img . '"';
         $html .= ' />
         </div>';
@@ -586,7 +586,7 @@ class Boots_Form
         }
         // good to go
 
-        if(!array_key_exists('id', $_POST) || !is_numeric($_POST['id']))
+        if(!array_key_exists('id', $_POST))
         {
             die(json_encode(array('error'=>'invalid image id')));
         }
