@@ -98,7 +98,11 @@
                     $('input', $parent).val(attachment.url);
                     $('a.boots-form-img-cross', $parent).show();
                     $button.hide();
-                    self.fetch_image($parent, attachment.id, $parent.width(), 120);
+                    $parent.css({
+                        'height'  : '73px',
+                        'padding' : '0'
+                    });
+                    self.fetch_image($parent, attachment.id, $parent.width(), 73);
                 }
             });
 
@@ -110,6 +114,10 @@
                 var $img = $('img', $parent);
                 $input.val('');
                 $img.slideUp('fast', function(){
+                    $parent.css({
+                        'height'  : 'auto',
+                        'padding' : '21px'
+                    });
                     $img.remove();
                     $a.fadeOut();
                     $btn.slideDown('fast');
@@ -136,6 +144,7 @@
                     if(!Data.error)
                     {
                         $elem.append('<img src="'+Data.url+'" width="'+Data.width+'" height="'+Data.height+'" />');
+                        $('img', $elem).css('margin-top', $elem.height()/2 - $('img', $elem).height()/2);
                     }
                 }
             });
