@@ -54,24 +54,7 @@
             var self = this;
 
             $('.iris', self.$elem).wpColorPicker({
-                // a callback to fire whenever the color changes to a valid color
-                change: function(event, ui){
-                    // event = standard jQuery event, produced by whichever control was changed.
-                    // ui = standard jQuery UI object, with a color member containing a Color.js object
-                    $(this).css('background-color', ui.color.toString()).attr('value', ui.color.toString());
-                },
-                // a callback to fire when the input is emptied or an invalid color
-                clear: function() {},
-                // hide the color picker controls on load
-                hide: true,
-                // show a group of common colors beneath the square
-                // or, supply an array of colors to customize further
-                palettes: true
-            });
-            var $wrap;
-            $('.iris', self.$elem).each(function(){
-                $wrap = $(this).parent().parent().parent();
-                $(this).iris('option', 'width', $wrap.width() - 10);
+                target: true
             });
         },
 
