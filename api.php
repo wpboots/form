@@ -365,8 +365,10 @@ class Boots_Form
 
         extract($this->extract_args($Args));
 
+        $v = $this->value($name, $value);
+
         $Data = array_merge_recursive(array(
-            'start' => 50,
+            'start' => $v ? (int) $v : 50,
             'range' => array(
                 'min' => 0,
                 'max' => 100
@@ -380,7 +382,7 @@ class Boots_Form
 
         $html .= '<input type="text"';
         $html .= $this->get_attributes($name, $id, '', '');
-        $html .= 'value="' . $this->value($name, $value) . '"';
+        $html .= 'value="' . $v . '"';
         $html .= ' />';
 
         $html .= '<div class="boots-form-nouislider-range" data-for="' . $id . '"></div>';
