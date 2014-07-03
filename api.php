@@ -60,10 +60,14 @@ class Boots_Form
         ->raw_style('select2')
             ->source($this->url . '/third-party/select2-3.4.5/select2.css')
             ->done()
+        ->raw_style('nouislider')
+            ->source($this->url . '/third-party/nouislider/nouislider.css')
+            ->done()
         ->raw_style('boots_form')
-            ->source($this->url . '/css/boots_form.css')
+            ->source($this->url . '/css/boots_form.min.css')
             ->requires('wp-color-picker')
             ->requires('select2')
+            ->requires('nouislider')
             ->done();
     }
 
@@ -82,10 +86,15 @@ class Boots_Form
             ->source($this->url . '/third-party/select2-3.4.5/select2.min.js')
             ->requires('jquery')
             ->done(true)
+        ->raw_script('nouislider')
+            ->source($this->url . '/third-party/nouislider/nouislider.min.js')
+            ->requires('jquery')
+            ->done(true)
         ->raw_script('boots_form')
             ->source($this->url . '/js/boots_form.min.js')
             ->requires('wp-color-picker')
             ->requires('select2')
+            ->requires('nouislider')
             ->requires('boots_media')
             ->requires('boots_ajax')
             ->vars('action_image_fetch', 'boots_form_image_fetch')
@@ -350,6 +359,44 @@ class Boots_Form
         return $html;
     }
 
+    private function generate_range($Args)
+    {
+        $html = '';
+
+        extract($this->extract_args($Args));
+
+        $Data = array_merge_recursive(array(
+            'start' => 50,
+            'range' => array(
+                'min' => 0,
+                'max' => 100
+            )
+        ), $data);
+
+        $html .= $this->get_label_tag($title, $id);
+        $html .= '<div class="boots-form-input">';
+
+        $html .= '<div class="boots-form-nouislider clearfix' . ($class ? (' ' . $class) : '') . '"' . ($style ? (' style="' . $style . '"') : '') . '>';
+
+        $html .= '<input type="text"';
+        $html .= $this->get_attributes($name, $id, '', '');
+        $html .= 'value="' . $this->value($name, $value) . '"';
+        $html .= ' />';
+
+        $html .= '<div class="boots-form-nouislider-range" data-for="' . $id . '"></div>';
+
+        $html .= '<span class="boots-form-nouislider-args">';
+        $html .= json_encode($Data);
+        $html .= '</span>';
+
+        $html .= '</div>';
+
+        $html .= '</div>';
+        $html .= $this->get_help_tag($help);
+
+        return $html;
+    }
+
     private function generate_image_uploader($Args)
     {
         $html = '';
@@ -548,8 +595,11 @@ class Boots_Form
             case 'checkboxes':
                 return $this->generate_checkboxes($Args);
             break;
-             case 'radio':
+            case 'radio':
                 return $this->generate_radio($Args);
+            break;
+            case 'range':
+                return $this->generate_range($Args);
             break;
             case 'image':
                 return $this->generate_image_uploader($Args);

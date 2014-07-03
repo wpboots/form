@@ -44,6 +44,7 @@
             self.select2();
             self.iris();
             self.image_handler();
+            self.nouislider();
         },
 
         // enable iris color picker
@@ -82,6 +83,26 @@
 
             $('select', self.$elem).select2({
                 width: 'element'
+            });
+        },
+
+        // enable nouislider
+        // uses $.fn.noUiSlider()
+        nouislider : function()
+        {
+            var self = this;
+
+            $('.boots-form-nouislider', self.$elem).each(function(i){
+                var $range = $('.boots-form-nouislider-range', $(this));
+                var $target = $('> input', $(this));
+                var $args = $('.boots-form-nouislider-args', $(this));
+                var args = $.parseJSON(($args.html()).trim());
+                $range.noUiSlider($.extend({start: 50, range: {'min': 0,'max': 100},
+                    serialization: {
+                        format: {decimals : 0},
+                        lower: [$.Link({target : $target})]
+                    }
+                }, args));
             });
         },
 

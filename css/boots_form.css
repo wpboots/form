@@ -7,8 +7,12 @@
 }
 
 .boots-form p {
+    /*
     margin: 14px 0 0 0;
     padding: 14px 0 0 0;
+    */
+    margin: 0;
+    padding: 0;
     border-top: 1px dashed #aaa;
     color: #666;
     font-size: 12px;
@@ -160,3 +164,29 @@ a.wp-color-result:after {
 textarea.wp-editor-area + span iframe {
     min-height: 220px !important;
 }
+
+.boots-form
+.boots-form-nouislider {
+    padding-top: 8px;
+}
+.boots-form
+.boots-form-nouislider > input {
+    width: 60px;
+    float: left;
+    margin-top: -8px;
+}
+.boots-form
+.boots-form-nouislider
+.boots-form-nouislider-range {
+    margin-left: 70px;
+}
+.boots-form
+.boots-form-nouislider
+.boots-form-nouislider-args {
+    width: 0 !important;
+    height: 0 !important;
+    display: none !important;
+}
+
+
+
