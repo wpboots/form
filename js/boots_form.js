@@ -155,8 +155,8 @@
                 done : function(Data){
                     if(!Data.error)
                     {
-                        $elem.append('<img src="'+Data.url+'" width="'+Data.width+'" height="'+Data.height+'" />');
-                        $('img', $elem).css('margin-top', $elem.height()/2 - $('img', $elem).height()/2);
+                        $elem.append('<img src="'+Data.url+'" style="max-width:100%;height:auto;" />');
+                        //$('img', $elem).css('margin-top', $elem.height()/2 - $('img', $elem).height()/2);
                     }
                 }
             });
