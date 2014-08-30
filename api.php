@@ -480,7 +480,7 @@ class Boots_Form
             wp_reset_postdata();
             $this->cache($for, $slug, $Posts);
         }
-        $Args['data'] = array_merge($Posts, array_key_exists('data', $Args) ? $Args['data'] : array());
+        $Args['data'] = $Posts + (array_key_exists('data', $Args) ? $Args['data'] : array());
         krsort($Args['data']);
         return $this->generate_select($Args, array_key_exists('multiple', $Args) ? $Args['multiple'] : false);
     }
@@ -517,7 +517,7 @@ class Boots_Form
             }
             $this->cache($taxonomy, $slug, $Categories);
         }
-        $Args['data'] = array_merge($Categories, array_key_exists('data', $Args) ? $Args['data'] : array());
+        $Args['data'] = $Categories + (array_key_exists('data', $Args) ? $Args['data'] : array());
         krsort($Args['data']);
         return $this->generate_select($Args, array_key_exists('multiple', $Args) ? $Args['multiple'] : false);
     }
@@ -543,7 +543,7 @@ class Boots_Form
             }
             $this->cache('tags', $slug, $Tags);
         }
-        $Args['data'] = array_merge($Tags, array_key_exists('data', $Args) ? $Args['data'] : array());
+        $Args['data'] = $Tags + (array_key_exists('data', $Args) ? $Args['data'] : array());
         krsort($Args['data']);
         return $this->generate_select($Args, array_key_exists('multiple', $Args) ? $Args['multiple'] : false);
     }
