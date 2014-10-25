@@ -459,6 +459,14 @@ class Boots_Form
         echo $this->get_help_tag($help);
     }
 
+	private function generate_tagger($Args)
+	{
+	    $Args['class'] = !isset($Args['class']) || empty($Args['class'])
+	        ? 'boots-form-tagger'
+	        : ($Args['class'] . ' boots-form-tagger');
+	    return $this->generate_textbox($Args);
+	}
+
     private function generate_posts($Args, $for = 'post')
     {
         $Query = array_merge(array(
@@ -609,6 +617,8 @@ class Boots_Form
             case 'tinymce':
                 return $this->generate_tinymce($Args);
             break;
+			case 'tagger':
+			    return $this->generate_tagger($Args);
             case 'posts':
                 return $this->generate_posts($Args, 'post');
             break;

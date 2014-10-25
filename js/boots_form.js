@@ -45,6 +45,7 @@
             self.iris();
             self.image_handler();
             self.nouislider();
+			self.tagger();
         },
 
         // enable iris color picker
@@ -88,6 +89,15 @@
                 }, args));
             });
         },
+
+		// tagger
+		        tagger : function()
+		        {
+		            $('.boots-form-tagger', self.$elem).select2({
+		                tags  : '',
+		                width : '100%'
+		            });
+		        },
 
         // image handler
         // uses $.fn.BootsMedia()
