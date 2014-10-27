@@ -341,6 +341,7 @@ class Boots_Form
         {
             $checked = false;
             $val = null;
+			$Arr['value'] = $value;
             extract($this->extract_args($Arr));
             $inner = '<input type="radio"';
             $inner .= $this->get_attributes($n, $id, $class, $style);
