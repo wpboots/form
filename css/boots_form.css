@@ -6,12 +6,12 @@
     text-shadow: 2px 2px 0px #fff;
 }
 
-.boots-form p {
+/*.boots-form p {
     margin: 0;
     padding: 0;
     color: #666;
     font-size: 12px;
-}
+}*/
 
 .boots-form textarea,
 
@@ -165,7 +165,7 @@ textarea.wp-editor-area + span iframe {
     padding-top: 8px;
 }
 .boots-form
-.boots-form-nouislider > input {
+.boots-form-nouislider input {
     width: 60px;
     float: left;
     margin-top: -8px;
@@ -173,15 +173,98 @@ textarea.wp-editor-area + span iframe {
 .boots-form
 .boots-form-nouislider
 .boots-form-nouislider-range {
-    margin-left: 70px;
+    margin-left: 80px;
+    margin-right: 10px;
+    cursor: pointer;
 }
 .boots-form
 .boots-form-nouislider
-.boots-form-nouislider-args {
-    width: 0 !important;
-    height: 0 !important;
-    display: none !important;
+.boots-form-nouislider-range
+.noUi-handle {
+    cursor: pointer;
+}
+.boots-form
+.boots-form-nouislider
+.boots-form-nouislider-range
+.noUi-handle.noUi-active {
+    background-color: #d7d7d7;
 }
 
+.boots-form
+.dropzone {
+    background-color: transparent;
+    border: 0;
+    min-height: 0;
+}
+.boots-form
+.dropzone .dz-message {
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    margin: 0;
+    padding: 7px;
+    display: block !important;
+    background-color: #3AE036;
+    color: #fff;
+    text-shadow: 0 0 1px #366B0C;
+    font-size: 14px;
+    font-weight: bold;
+    border-radius: 4px;
+    border: 1px solid #64BE1C;
+}
+.boots-form
+.dropzone .dz-message:hover {
+    background-color: #64BE1C;
+    text-transform: uppercase;
+}
+.boots-form
+.dropzone .dz-remove {
+    display: none;
+    position: absolute;
+    bottom: -10px;
+    right: -10px;
+    z-index: 99;
+    padding: 0px 5px;
+    font-size: 13px;
+    text-align: center;
+    line-height: 18px;
+    background-color: red;
+    border: 1px solid rgb(203, 37, 37);
+    color: #fff;
+    text-decoration: none;
+    border-radius: 15px;
+    font-family: verdana;
+}
+.boots-form
+.dropzone .dz-remove:hover {
+    background-color: rgb(203, 37, 37);
+    text-decoration: none;
+}
+.boots-form
+.dropzone .dz-preview {
+    margin: 0;
+}
+.boots-form
+.dropzone .dz-preview.dz-image-preview {
+    padding: 10px;
+    border: 1px solid #E2E2E2;
+}
+.boots-form
+.dropzone .dz-preview .dz-image {
+    border-radius: 0px;
+    width: 80px;
+    height: 80px;
+    margin: auto;
+    border-radius: 4px;
+}
+.boots-form
+.dropzone .dz-preview .dz-image img {
+    margin: auto;
+    border-radius: 4px;
+}
+.boots-form
+.dropzone .dz-preview .dz-details {
+    line-height: 13px;
+}
 
 

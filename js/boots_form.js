@@ -3,7 +3,7 @@
  *
  * @package Boots
  * @subpackage Form
- * @version 1.0.0
+ * @version 1.0.1
  * @license GPLv2
  *
  * Boots - The missing WordPress framework. http://wpboots.com
@@ -30,6 +30,7 @@
 
     var BootsFormObj = {
 
+        uploader_path : boots_form.uploader_path,
         action_image_fetch : boots_form.action_image_fetch,
         nonce_image_fetch : boots_form.nonce_image_fetch,
 
@@ -41,11 +42,14 @@
             self.options = $.extend({}, $.fn.BootsForm.options, options);
 
             // method calls
-            self.select2();
             self.iris();
-            self.image_handler();
+            self.select2();
+            self.switchery();
             self.nouislider();
+            self.image_handler();
 			self.tagger();
+            self.uploader();
+            self.$elem.trigger('boots-form:init', self);
         },
 
         // enable iris color picker
@@ -70,34 +74,119 @@
             });
         },
 
+        // enable switchery
+        // uses Switchery()
+        switchery : function()
+        {
+            var self = this;
+
+            $('input[type="checkbox"]', self.$elem).each(function (i, el){
+                var switchery = new Switchery(el, {
+                    color          : $(this).data('color') || '#64bd63'
+                  , secondaryColor : $(this).data('secondarycolor') || '#d7d7d7'
+                  , jackColor      : $(this).data('jackcolor') || '#fff'
+                  , className      : $(this).data('classname') || 'switchery'
+                  , disabled       : $(this).data('disabled') || false
+                  , disabledOpacity: $(this).data('disabledopacity') || 0.5
+                  , speed          : $(this).data('speed') || '0.5s'
+                  , size           : $(this).data('size') || 'small'
+                });
+            });
+        },
+
         // enable nouislider
         // uses $.fn.noUiSlider()
         nouislider : function()
         {
             var self = this;
 
-            $('.boots-form-nouislider', self.$elem).each(function(i){
-                var $range = $('.boots-form-nouislider-range', $(this));
-                var $target = $('> input', $(this));
-                var $args = $('.boots-form-nouislider-args', $(this));
-                var args = $.parseJSON(($args.html()).trim());
-                $range.noUiSlider($.extend({start: 50, range: {'min': 0,'max': 100},
+            var $range, $target, $args, args;
+            $('.boots-form-nouislider', self.$elem).each(function (i, el){
+                $range = $('.boots-form-nouislider-range', $(this));
+                $target = $('input', $(this));
+                $range.noUiSlider({
+                    start: $target.data('start') || $target.data('min') || 0,
+                    range: {
+                        min: $target.data('min') || 0,
+                        max: $target.data('max') || 100
+                    },
                     serialization: {
-                        format: {decimals : 0},
+                        format: {decimals : $target.data('decimals') || 0},
                         lower: [$.Link({target : $target})]
                     }
-                }, args));
+                });
             });
         },
 
 		// tagger
-		        tagger : function()
-		        {
-		            $('.boots-form-tagger', self.$elem).select2({
-		                tags  : '',
-		                width : '100%'
-		            });
-		        },
+        tagger : function()
+        {
+            var self = this;
+
+            $('.boots-form-tagger', self.$elem).select2({
+                tags  : '',
+                width : '100%'
+            });
+        },
+
+        // uploader
+        uploader : function()
+        {
+            var self = this;
+            Dropzone.autoDiscover = false;
+            $('.boots-form-uploader', self.$elem).each(function (i, el){
+                var $el = $(this);
+                $el.css('height', 'auto', 'important');
+                var myDropzone = new Dropzone($el[0], {
+                    url: self.uploader_path,
+                    addRemoveLinks : true,
+                    thumbnailWidth : 80,
+                    thumbnailHeight : 80,
+                    //acceptedFiles : '.pdf',
+                    dictDefaultMessage : 'Drop files',
+                    dictRemoveFile: 'X'/*,
+                    resize : function (file){
+                        var xhr = file.xhr;
+                        //F.file;
+                        console.log(file);
+                        return {
+                            srcX: 0,
+                            srcY: 0,
+                            srcWidth: 80,
+                            srcHeight: 80
+                        }
+                    }*/
+                });
+                myDropzone.on('addedfile', function (file){
+                    $el.on('mouseover', function (e){
+                        $('.dz-remove', $(this)).show();
+                    }).on('mouseout', function (e){
+                        $('.dz-remove', $(this)).hide();
+                    });
+                    $el.AwesomeGrid({
+                        rowSpacing  : 10,
+                        colSpacing  : 10,
+                        initSpacing : 0,
+                        responsive  : true,
+                        fadeIn      : true,
+                        hiddenClass : false,
+                        item        : '.dz-preview',
+                        columns     : {
+                            'defaults' : 7,
+                            '700'      : 5,
+                            '350'      : 3,
+                            '100'      : 1
+                        },
+                        context     : 'self',
+                        onReady     : function($item){
+                            $item.stop(false, false);
+                            $('.dz-message', $el).css('position', 'absolute');
+                            $el.css('height', $el.height() + $item.height() - 20, 'important');
+                        }
+                    });
+                });
+            });
+        },
 
         // image handler
         // uses $.fn.BootsMedia()
@@ -170,6 +259,40 @@
                     }
                 }
             });
+        },
+
+        showElement : function($e)
+        {
+            $e.slideDown('fast', function(){
+                $(this).trigger($.Event('resize'));
+            });
+        },
+        hideElement : function($e)
+        {
+            $e.slideUp('fast', function(){
+                $(this).trigger($.Event('resize'));
+            });
+        },
+        conditionalElement : function($wrapper, conds, ne)
+        {
+            var self = this;
+            var $_el1, $_el2;
+            for(var i = 0; i < conds.length; i++)
+            {
+                $_el1 = $('[name="' + conds[i].el + '"]');
+                if(!ne)
+                    $_el1.on('keyup change', function (){
+                        self.conditionalElement($wrapper, conds, true);
+                    });
+                if(['checkbox','radio'].indexOf($_el1.prop('type')) > -1) {
+                    $_el2 = $('[name="' + conds[i].el + '"]:checked');
+                    if($_el2.val() != conds[i].val)
+                        return this.hideElement($wrapper);
+                } else if($_el1.val() != conds[i].val) {
+                    return this.hideElement($wrapper);
+                }
+            }
+            return this.showElement($wrapper);
         }
     };
 

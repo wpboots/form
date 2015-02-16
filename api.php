@@ -5,7 +5,7 @@
  *
  * @package Boots
  * @subpackage Form
- * @version 1.0.0
+ * @version 1.0.1
  * @license GPLv2
  *
  * Boots - The missing WordPress framework. http://wpboots.com
@@ -39,6 +39,8 @@ class Boots_Form
 
     public function __construct($Boots, $Args, $dir, $url)
     {
+        if(!$Boots) return false;
+
         $this->Boots = $Boots;
         $this->Settings = $Args;
         $this->dir = $dir;
@@ -59,15 +61,25 @@ class Boots_Form
         ->style('wp-color-picker')->done()
         ->raw_style('select2')
             ->source($this->url . '/third-party/select2-3.4.5/select2.css')
+            ->version('3.4.5')
+            ->done()
+        ->raw_style('switchery')
+            ->source($this->url . '/third-party/switchery/switchery.min.css')
             ->done()
         ->raw_style('nouislider')
             ->source($this->url . '/third-party/nouislider/nouislider.css')
+            ->done()
+        ->raw_style('dropzone')
+            ->source($this->url . '/third-party/dropzone/dropzone.min.css')
+            ->version('4.0.0')
             ->done()
         ->raw_style('boots_form')
             ->source($this->url . '/css/boots_form.min.css')
             ->requires('wp-color-picker')
             ->requires('select2')
+            ->requires('switchery')
             ->requires('nouislider')
+            ->requires('dropzone')
             ->done();
     }
 
@@ -80,23 +92,33 @@ class Boots_Form
         $this->Boots->Media->scripts();
 
         $this->Boots->Enqueue
-        ->script('jquery')->done()
-        ->script('wp-color-picker')->done()
+        ->script('jquery')->done(true)
+        ->script('wp-color-picker')->done(true)
         ->raw_script('select2')
             ->source($this->url . '/third-party/select2-3.4.5/select2.min.js')
             ->requires('jquery')
+            ->version('3.4.5')
+            ->done(true)
+        ->raw_script('switchery')
+            ->source($this->url . '/third-party/switchery/switchery.min.js')
             ->done(true)
         ->raw_script('nouislider')
             ->source($this->url . '/third-party/nouislider/nouislider.min.js')
-            ->requires('jquery')
+            ->done(true)
+        ->raw_script('dropzone')
+            ->source($this->url . '/third-party/dropzone/dropzone.min.js')
+            ->version('4.0.0')
             ->done(true)
         ->raw_script('boots_form')
             ->source($this->url . '/js/boots_form.min.js')
             ->requires('wp-color-picker')
             ->requires('select2')
+            ->requires('switchery')
             ->requires('nouislider')
+            ->requires('dropzone')
             ->requires('boots_media')
             ->requires('boots_ajax')
+            ->vars('uploader_path', $this->url . '/uploader.php')
             ->vars('action_image_fetch', 'boots_form_image_fetch')
             ->vars('nonce_image_fetch', wp_create_nonce('boots_form_image_fetch'))
             ->done(true);
@@ -180,7 +202,19 @@ class Boots_Form
         return $this->get_name_attr($name)
              . $this->get_id_attr($id)
              . $this->get_class_attr($class)
-             . $this->get_style_attr($style);
+             . $this->get_style_attr($style)
+             . ' ';
+    }
+
+    private function get_data_attributes($Data)
+    {
+        if(!is_array($Data)) return '';
+        $d = '';
+        foreach($Data as $data_k => $data_v)
+        {
+            $d .= ' data-' . $data_k . '="' . $data_v . '"';
+        }
+        return $d;
     }
 
     private function generate_custom($type, $Args)
@@ -195,7 +229,7 @@ class Boots_Form
 
     private function generate_html($Args)
     {
-        return $Args['html'];
+        return is_array($Args) ? $Args['html'] : $Args;
     }
 
     private function generate_textbox($Args, $flavour = 'text')
@@ -220,7 +254,6 @@ class Boots_Form
             $html .= '</div>';
             $html .= $this->get_help_tag($help);
         }
-
 
         return $html;
     }
@@ -292,72 +325,37 @@ class Boots_Form
         return $html;
     }
 
-    private function generate_checkboxes($Args)
+    private function generate_checkbox($Args, $radio = false)
     {
         $html = '';
 
+        $checked = false;
+
         extract($this->extract_args($Args));
-        $h = $help;
 
         $html .= '<div class="boots-form-input">';
 
-        $i = 1;
-        $it = count($data);
-        foreach($data as $t => $Arr)
-        {
-            $checked = false;
-            $val = null;
-            extract($this->extract_args($Arr));
-            $inner = '<input type="checkbox"';
-            $inner .= $this->get_attributes($name, $id, $class, $style);
-            $inner .= $checked || ($val == $this->value($name, $value))
-                    ? ' checked="checked"'
-                    : '';
-            $inner .= ' value="' . $val . '" /> ';
-            $css_style = ($i++ == $it) ? 'margin-bottom: 0;' : false;
-            $html .= $this->get_label_tag($inner . $t, $id, $css_style);
-        }
+        $d = $this->get_data_attributes($data);
+
+        $checkbox = '<input type="' . ($radio ? 'radio' : 'checkbox') . '"';
+        $checkbox .= $this->get_attributes($name, $id, $class, $style);
+        $checkbox .= $checked || ($value == $this->value($name))
+                ? ' checked="checked"'
+                : '';
+        $checkbox .= ' value="' . $value . '"' . $d . ' /> ';
+        $css = !$help ? 'margin-bottom: 0;' : false;
+        $html .= $this->get_label_tag($checkbox . $title, $id, $css);
 
         $html .= '</div>';
 
-        $html .= $this->get_help_tag($h);
+        $html .= $this->get_help_tag($help);
 
         return $html;
     }
 
     private function generate_radio($Args)
     {
-        $html = '';
-
-        extract($this->extract_args($Args));
-        $h = $help;
-        $n = $name;
-
-        $html .= '<div class="boots-form-input">';
-
-        $i = 1;
-        $it = count($data);
-        foreach($data as $t => $Arr)
-        {
-            $checked = false;
-            $val = null;
-			$Arr['value'] = $value;
-            extract($this->extract_args($Arr));
-            $inner = '<input type="radio"';
-            $inner .= $this->get_attributes($n, $id, $class, $style);
-            $inner .= $checked || ($val == $this->value($n, $value))
-                    ? ' checked="checked"'
-                    : '';
-            $inner .= ' value="' . $val . '" /> ';
-            $css_style = ($i++ == $it) ? 'margin-bottom: 0;' : false;
-            $html .= $this->get_label_tag($inner . $t, $id, $css_style);
-        }
-
-        $html .= '</div>';
-
-        $html .= $this->get_help_tag($h);
-
-        return $html;
+        return $this->generate_checkbox($Args, true);
     }
 
     private function generate_range($Args)
@@ -368,31 +366,56 @@ class Boots_Form
 
         $v = $this->value($name, $value);
 
-        $Data = array_merge_recursive(array(
-            'start' => $v ? (int) $v : 50,
-            'range' => array(
-                'min' => 0,
-                'max' => 100
-            )
-        ), $data);
+        $Data = is_array($data) ? array_merge(array(
+            'start' => $v ? (int) $v : (isset($data['min']) && (int) $data['min'] ? $data['min'] : 0),
+            'min' => 0,
+            'max' => 100,
+            'decimals' => 0
+        ), $data) : array();
+
+        $d = $this->get_data_attributes($Data);
 
         $html .= $this->get_label_tag($title, $id);
         $html .= '<div class="boots-form-input">';
-
-        $html .= '<div class="boots-form-nouislider clearfix' . ($class ? (' ' . $class) : '') . '"' . ($style ? (' style="' . $style . '"') : '') . '>';
-
+        $html .= '<div class="boots-form-nouislider clearfix';
+        $html .= ($class ? (' ' . $class) : '') . '"';
+        $html .= ($style ? (' style="' . $style . '"') : '') . '>';
         $html .= '<input type="text"';
         $html .= $this->get_attributes($name, $id, '', '');
         $html .= 'value="' . $v . '"';
-        $html .= ' />';
-
+        $html .= $d . ' />';
         $html .= '<div class="boots-form-nouislider-range" data-for="' . $id . '"></div>';
+        $html .= '</div>'; // bfn
+        $html .= '</div>'; // bfi
+        $html .= $this->get_help_tag($help);
+        return $html;
+    }
 
-        $html .= '<span class="boots-form-nouislider-args">';
-        $html .= json_encode($Data);
-        $html .= '</span>';
+    private function generate_rangex($Args)
+    {
+        $html = '';
 
-        $html .= '</div>';
+        extract($this->extract_args($Args));
+
+        $html .= $this->get_label_tag($title, $id);
+        $html .= '<div class="boots-form-input powerange-wrap">';
+
+        $sval = $this->value($name, $value);
+
+        $start = $sval !== false ? $sval : (isset($data['min']) ? $data['min'] : 0);
+        $Data = is_array($data) ? array_merge(array(
+            'start' => $start
+        ), $data) : array('start' => $start);
+
+        $d = $this->get_data_attributes($Data);
+
+        $class = $class ? ($class . ' ') : '';
+        $class .= 'powerange';
+
+        $html .= '<input type="text"';
+        $html .= $this->get_attributes($name, $id, $class, $style);
+        $html .= 'value="' . $sval  . '"';
+        $html .= $d . ' />';
 
         $html .= '</div>';
         $html .= $this->get_help_tag($help);
@@ -467,6 +490,32 @@ class Boots_Form
 	        : ($Args['class'] . ' boots-form-tagger');
 	    return $this->generate_textbox($Args);
 	}
+
+    private function generate_uploader($Args)
+    {
+        $html = '';
+
+        extract($this->extract_args($Args));
+
+        $name = $name ? $name : $id;
+
+        $html .= $this->get_label_tag($title, $id);
+
+        $html .= '<div class="boots-form-input">';
+
+        $html .= '<div class="boots-form-uploader dropzone"></div>';
+
+        /*$html .= '<form action="' . $this->url . '/uploader.php"
+            class="dropzone"
+            id="my-awesome-dropzone">
+        </form>';*/
+
+        $html .= '</div>';
+
+        $html .= $this->get_help_tag($help);
+
+        return $html;
+    }
 
     private function generate_posts($Args, $for = 'post')
     {
@@ -603,8 +652,8 @@ class Boots_Form
             case 'multiple':
                 return $this->generate_select($Args, true);
             break;
-            case 'checkboxes':
-                return $this->generate_checkboxes($Args);
+            case 'checkbox':
+                return $this->generate_checkbox($Args);
             break;
             case 'radio':
                 return $this->generate_radio($Args);
@@ -620,6 +669,10 @@ class Boots_Form
             break;
 			case 'tagger':
 			    return $this->generate_tagger($Args);
+            // TODO: uploader
+            /*case 'uploader':
+                return $this->generate_uploader($Args);
+            break;*/
             case 'posts':
                 return $this->generate_posts($Args, 'post');
             break;
