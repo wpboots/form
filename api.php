@@ -5,7 +5,7 @@
  *
  * @package Boots
  * @subpackage Form
- * @version 1.0.1
+ * @version 1.0.3
  * @license GPLv2
  *
  * Boots - The missing WordPress framework. http://wpboots.com
@@ -307,6 +307,7 @@ class Boots_Form
             $html .= '<option value="'. $i .'"';
             if(!$multi)
             {
+				if(isset($checked) && $checked === $i) $html .= ' selected="selected"';
                 $html .= ($i === $this->value($name, $value)) ? ' selected="selected"' : '';
             }
             else

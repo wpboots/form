@@ -3,7 +3,7 @@
  *
  * @package Boots
  * @subpackage Form
- * @version 1.0.2
+ * @version 1.0.3
  * @license GPLv2
  *
  * Boots - The missing WordPress framework. http://wpboots.com
@@ -277,6 +277,7 @@
         {
             var self = this;
             var $_el1, $_el2;
+            var v;
             for(var i = 0; i < conds.length; i++)
             {
                 $_el1 = $('[name="' + conds[i].el + '"]');
@@ -286,10 +287,14 @@
                     });
                 if(['checkbox','radio'].indexOf($_el1.prop('type')) > -1) {
                     $_el2 = $('[name="' + conds[i].el + '"]:checked');
-                    if(conds[i].val.indexOf($_el2.val()) < 0)
+                    v = $_el2.val() ? $_el2.val() : '';
+                    if(!v.match(conds[i].val))
                         return this.hideElement($wrapper);
-                } else if(conds[i].val.indexOf($_el1.val()) < 0) {
-                    return this.hideElement($wrapper);
+                } else {
+                    v = $_el1.val() ? $_el1.val() : '';
+                    if(!v.match(conds[i].val)) {
+                        return this.hideElement($wrapper);
+                    }
                 }
             }
             return this.showElement($wrapper);
